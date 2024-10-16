@@ -82,124 +82,124 @@ app.post("/meet",async (req,res)=>{
           res.redirect("/home");
         }
 })
-const CLIENT_ID = process.env.CLIENT_ID;
-const CLIENT_SECRET = process.env.CLIENT_SECRET;
-const REDIRECT_URL = process.env.REDIRECT_URL;
-const oauth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URL);
-const SCOPES = ['https://www.googleapis.com/auth/calendar'];
+// const CLIENT_ID = process.env.CLIENT_ID;
+// const CLIENT_SECRET = process.env.CLIENT_SECRET;
+// const REDIRECT_URL = process.env.REDIRECT_URL;
+// const oauth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URL);
+// const SCOPES = ['https://www.googleapis.com/auth/calendar'];
 
-const url = oauth2Client.generateAuthUrl({
-  access_type: 'offline',
-  scope: SCOPES,
-});
+// const url = oauth2Client.generateAuthUrl({
+//   access_type: 'offline',
+//   scope: SCOPES,
+// });
 
-// Assuming you have a Mongoose model defined for your connections
-const Connection = require('../models/Connection');
+// // Assuming you have a Mongoose model defined for your connections
+// const Connection = require('../models/Connection');
 
-app.post('/authorize', async (req, res) => {
-  try {
-    // Update the connection document in MongoDB
-    await Connection.updateOne(
-      {
-        mentor_id: req.body.mid1,
-        mentee_id: req.body.mid2,
-      },
-      {
-        meet: "flag",
-        meetdate: req.body.date || null,
-        meettime: req.body.time || null,
-        duration: req.body.duration || null,
-      }
-    );
+// app.post('/authorize', async (req, res) => {
+//   try {
+//     // Update the connection document in MongoDB
+//     await Connection.updateOne(
+//       {
+//         mentor_id: req.body.mid1,
+//         mentee_id: req.body.mid2,
+//       },
+//       {
+//         meet: "flag",
+//         meetdate: req.body.date || null,
+//         meettime: req.body.time || null,
+//         duration: req.body.duration || null,
+//       }
+//     );
 
-    // Redirect to the OAuth URL for authentication
-    res.send(url);
-  } catch (err) {
-    console.log(err.message);
-    res.send("error");
-  }
-});
+//     // Redirect to the OAuth URL for authentication
+//     res.send(url);
+//   } catch (err) {
+//     console.log(err.message);
+//     res.send("error");
+//   }
+// });
 
-app.get('/oauth2callback', async (req, res) => {
-  try {
-    const code = req.query.code;
-    const { tokens } = await oauth2Client.getToken(code);
-    oauth2Client.setCredentials(tokens);
+// app.get('/oauth2callback', async (req, res) => {
+//   try {
+//     const code = req.query.code;
+//     const { tokens } = await oauth2Client.getToken(code);
+//     oauth2Client.setCredentials(tokens);
 
-    // Create the meeting link using your function
-    const link = await createMeetLink(req.body.date, req.body.time, req.body.duration);
+//     // Create the meeting link using your function
+//     const link = await createMeetLink(req.body.date, req.body.time, req.body.duration);
 
-    // Update the meeting link in MongoDB
-    await Connection.updateOne(
-      {
-        mentor_id: req.user.mid,
-        meet: 'flag', // Ensure you are updating the correct entry
-      },
-      {
-        meet: link,
-      }
-    );
+//     // Update the meeting link in MongoDB
+//     await Connection.updateOne(
+//       {
+//         mentor_id: req.user.mid,
+//         meet: 'flag', // Ensure you are updating the correct entry
+//       },
+//       {
+//         meet: link,
+//       }
+//     );
 
-    // Send the meeting link to the frontend (if using a response here)
-    res.status(200).json({
-      success: true,
-      message: "Meeting link created successfully",
-      meetLink: link, // Send the meeting link in the response
-    });
-  } catch (error) {
-    console.error(error.message);
-    res.status(500).json({
-      success: false,
-      message: "Error creating meeting link",
-    });
-  }
-});
+//     // Send the meeting link to the frontend (if using a response here)
+//     res.status(200).json({
+//       success: true,
+//       message: "Meeting link created successfully",
+//       meetLink: link, // Send the meeting link in the response
+//     });
+//   } catch (error) {
+//     console.error(error.message);
+//     res.status(500).json({
+//       success: false,
+//       message: "Error creating meeting link",
+//     });
+//   }
+// });
 
-async function createMeetLink(meetDate, meetTime, duration) {
-  const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
+// async function createMeetLink(meetDate, meetTime, duration) {
+//   const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
   
-  // Construct start and end date-time strings
-  const startDateTime = new Date(`${meetDate}T${meetTime}:00`); // Assume meetTime is in 'HH:mm' format
-  const endDateTime = new Date(startDateTime.getTime() + duration * 60 * 1000); // duration in minutes
+//   // Construct start and end date-time strings
+//   const startDateTime = new Date(`${meetDate}T${meetTime}:00`); // Assume meetTime is in 'HH:mm' format
+//   const endDateTime = new Date(startDateTime.getTime() + duration * 60 * 1000); // duration in minutes
 
-  const event = {
-    summary: 'Sample Meeting',
-    description: 'A chance to hear more about Google Meet API',
-    start: {
-      dateTime: startDateTime.toISOString(),
-      timeZone: 'America/Los_Angeles', // Adjust based on your requirements
-    },
-    end: {
-      dateTime: endDateTime.toISOString(),
-      timeZone: 'America/Los_Angeles',
-    },
-    conferenceData: {
-      createRequest: {
-        requestId: `request-id-${Date.now()}`, // Unique request ID
-        conferenceSolutionKey: {
-          type: 'hangoutsMeet',
-        },
-      },
-    },
-    reminders: {
-      useDefault: true,
-    },
-  };
+//   const event = {
+//     summary: 'Sample Meeting',
+//     description: 'A chance to hear more about Google Meet API',
+//     start: {
+//       dateTime: startDateTime.toISOString(),
+//       timeZone: 'America/Los_Angeles', // Adjust based on your requirements
+//     },
+//     end: {
+//       dateTime: endDateTime.toISOString(),
+//       timeZone: 'America/Los_Angeles',
+//     },
+//     conferenceData: {
+//       createRequest: {
+//         requestId: `request-id-${Date.now()}`, // Unique request ID
+//         conferenceSolutionKey: {
+//           type: 'hangoutsMeet',
+//         },
+//       },
+//     },
+//     reminders: {
+//       useDefault: true,
+//     },
+//   };
 
-  try {
-    const response = await calendar.events.insert({
-      calendarId: 'primary',
-      resource: event,
-      conferenceDataVersion: 1,
-    });
+//   try {
+//     const response = await calendar.events.insert({
+//       calendarId: 'primary',
+//       resource: event,
+//       conferenceDataVersion: 1,
+//     });
 
-    const meetLink = response.data.conferenceData.entryPoints[0].uri;
-    return meetLink;
-  } catch (error) {
-    console.error('Error creating event:', error);
-    return null;
-  }
-}
+//     const meetLink = response.data.conferenceData.entryPoints[0].uri;
+//     return meetLink;
+//   } catch (error) {
+//     console.error('Error creating event:', error);
+//     return null;
+//   }
+// }
 
 app.listen(PORT ,()=>{
     console.log(`App is running at port ${PORT}`)
