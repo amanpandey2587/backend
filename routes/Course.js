@@ -6,7 +6,7 @@ const router=express.Router();
 
 // 1) Course Controllers
 const {
-   getCourseDetails
+   getCourseDetails,getAllCourses
 }= require("../controllers/Course");
 
 // 2) Categories controllers 

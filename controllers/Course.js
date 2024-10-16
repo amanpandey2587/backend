@@ -25,7 +25,7 @@ exports.getAllCourses = async (req, res) => {
                 ratingAndReviews: true,
                 studentsEnroled: true,
             })
-            .populate("instructor")
+            .populate("Instructor")
             .exec();
 
         // Check if courses were found
