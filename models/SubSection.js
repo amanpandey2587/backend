@@ -1,18 +1,20 @@
-const mongoose=require("mongoose");
+// Not required here 
+const mongoose = require("mongoose");
 
-const subSectionSchema=new mongoose.Schema({
-    title:{
-        type:String
+// Define the subsection schema
+const subSectionSchema = new mongoose.Schema({
+    title: {
+        type: String,
+        required: true, // Optional: make title required
     },
-    timeDuration:{
-        type:String,
-    },
-    description:{
-        type:String,
-    },
-    videoUrl:{
-        type:String,
-    },
+    attendance: [
+        {
+            type:mongoose.Schema.Types.ObjectId,
+            required:true,
+            ref:"Attendance"
+        },
+    ]
 });
 
-module.exports=mongoose.model("SubSection",subSectionSchema);
+// Export the model
+module.exports = mongoose.model("Student", subSectionSchema);

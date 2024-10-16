@@ -91,22 +91,22 @@ exports.isInstructor=async (req,res,next)=>{
     }
 }
 
-// isAdmin 
-exports.isAdmin=async (req,res,next)=>{
-    try{
-        console.log("Account type is ",req.user.accountType)
-        if(req.user.accountType!== "Admin"){
-            return res.status(403).json({
-                success:false,
-                message:"This is the protected routes for Admins"
-            })
-        }
-        next();
-    }
-    catch(error){
-        return res.status(500).json({
-            success:false,
-            message:"User not verified, please try again later"
-        })
-    }
-}
+// isAdmin - For the site admins only- for further designing
+// exports.isAdmin=async (req,res,next)=>{
+//     try{
+//         console.log("Account type is ",req.user.accountType)
+//         if(req.user.accountType!== "Admin"){
+//             return res.status(403).json({
+//                 success:false,
+//                 message:"This is the protected routes for Admins"
+//             })
+//         }
+//         next();
+//     }
+//     catch(error){
+//         return res.status(500).json({
+//             success:false,
+//             message:"User not verified, please try again later"
+//         })
+//     }
+// }
