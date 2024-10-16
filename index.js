@@ -57,6 +57,12 @@ app.get("/",(req,res) =>{
         message:"Your server is up and running ...",
     })
 })
+app.get("/bkc",(req,res)=>{
+    return res.json({
+        success:true,
+        message:"Bkc is best"
+    })
+})
 
 app.listen(PORT ,()=>{
     console.log(`App is running at port ${PORT}`)
