@@ -22,7 +22,7 @@ const PORT = process.env.PORT || 4000;
 // database connection 
 database.connect();
 app.use(cors({
-    origin: 'http://localhost:3000', // Allow only your frontend application
+    origin: '*', // Allow only your frontend application
     methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allow specific HTTP methods
     credentials: true, // Allow credentials (cookies, authorization headers, etc.)
     allowedHeaders: ['Content-Type', 'Authorization'],
