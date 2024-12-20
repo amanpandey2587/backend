@@ -4,11 +4,11 @@ const sectionSchema=new mongoose.Schema({
     sectionName:{
         type:String,
     },
-    studentEnrolled:[
+    subSection:[
         {
         type:mongoose.Schema.Types.ObjectId,
         required:true,
-        ref:"User",
+        ref:"SubSection",
     },
 ],
 });

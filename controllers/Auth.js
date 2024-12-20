@@ -4,6 +4,7 @@ const OTP=require("../models/OTP");
 const jwt=require("jsonwebtoken");
 const optGenerator=require("otp-generator");
 const mailSender=require("../utils/mailSender")
+const emailTemplate = require("../mail/templates/emailVerificationTemplate");
 const { passwordUpdated } = require("../mail/templates/passwordUpdate");
 const Profile = require("../models/Profile");
 require("dotenv").config();
@@ -143,7 +144,7 @@ exports.login =async (req,res)=>{
                 accountType:user.accountType,
             }
             const token = jwt.sign(payload, process.env.JWT_SECRET, {
-                expiresIn:"2h"
+                expiresIn:"2d"
             });
             user.token=token;
             user.password=undefined;
@@ -224,7 +225,7 @@ exports.sendOTP=async (req,res)=>{
         console.log(otpBody);
 
         // Also add for email validation 
-        await mailSender(email,"OTP- Validation" ,otpBody); 
+        await mailSender(email,"OTP- Validation",emailTemplate(otp)); 
         // return response successful 
         res.status(200).json({
             success:true,

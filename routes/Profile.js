@@ -2,8 +2,8 @@ const express=require("express")
 const router =express.Router()
 
 // importing middleware and controllers 
-const {auth}=require("../middlewares/auth")
-const{deleteAccount,updateProfile,getAllUserDetails,updateDisplayPicture,getEnrolledCourses}=require("../controllers/Profile")
+const {auth, isInstructor}=require("../middlewares/auth")
+const{deleteAccount,updateProfile,getAllUserDetails,updateDisplayPicture,getEnrolledCourses,instructorDashboard}=require("../controllers/Profile")
  
 // Profile routes
 // 1)Delete acccount 
@@ -14,5 +14,5 @@ router.get("/getUserDetails",auth,getAllUserDetails)
 // 2) Get enrolled courses
 router.get("/getEnrolledCourses",auth,getEnrolledCourses)
 router.put("/updateDisplayPicture",auth,updateDisplayPicture)
-
+router.get("/instructorDashboard",auth,isInstructor,instructorDashboard)
 module.exports=router

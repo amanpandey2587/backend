@@ -26,8 +26,15 @@ const userSchema=new mongoose.Schema({
         type:String,
         enum:["Student","Instructor"],
         required:true,
-    }
-    ,
+    },
+    active: {
+        type: Boolean,
+        default: true,
+    },
+    approved: {
+        type: Boolean,
+        default: true,
+    },
     additionalDetails:{
         type:mongoose.Schema.Types.ObjectId,
         required:true,
@@ -45,12 +52,10 @@ const userSchema=new mongoose.Schema({
     resetPasswordExpires:{
         type:Date,
     },
-    attendance: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Attendance", 
-        }
-    ],
+    image: {
+        type: String,
+        required: true,
+    },
     courseProgress:[
         {
             type:mongoose.Schema.Types.ObjectId,

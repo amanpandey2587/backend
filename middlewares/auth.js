@@ -1,7 +1,6 @@
 const jwt=require("jsonwebtoken");
 require("dotenv").config();
 const User=require("../models/User");
-// const { response } = require("express");
 
 // auth 
 exports.auth=async(req,res,next)=>{
@@ -92,21 +91,21 @@ exports.isInstructor=async (req,res,next)=>{
 }
 
 // isAdmin - For the site admins only- for further designing
-// exports.isAdmin=async (req,res,next)=>{
-//     try{
-//         console.log("Account type is ",req.user.accountType)
-//         if(req.user.accountType!== "Admin"){
-//             return res.status(403).json({
-//                 success:false,
-//                 message:"This is the protected routes for Admins"
-//             })
-//         }
-//         next();
-//     }
-//     catch(error){
-//         return res.status(500).json({
-//             success:false,
-//             message:"User not verified, please try again later"
-//         })
-//     }
-// }
+exports.isAdmin=async (req,res,next)=>{
+    try{
+        console.log("Account type is ",req.user.accountType)
+        if(req.user.accountType!== "Admin"){
+            return res.status(403).json({
+                success:false,
+                message:"This is the protected routes for Admins"
+            })
+        }
+        next();
+    }
+    catch(error){
+        return res.status(500).json({
+            success:false,
+            message:"User not verified, please try again later"
+        })
+    }
+}

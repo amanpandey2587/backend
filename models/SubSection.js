@@ -1,20 +1,10 @@
-// Not required here 
 const mongoose = require("mongoose");
 
-// Define the subsection schema
-const subSectionSchema = new mongoose.Schema({
-    title: {
-        type: String,
-        required: true, // Optional: make title required
-    },
-    attendance: [
-        {
-            type:mongoose.Schema.Types.ObjectId,
-            required:true,
-            ref:"Attendance"
-        },
-    ]
+const SubSectionSchema = new mongoose.Schema({
+	title: { type: String },
+	timeDuration: { type: String },
+	description: { type: String },
+	videoUrl: { type: String },
 });
 
-// Export the model
-module.exports = mongoose.model("Student", subSectionSchema);
+module.exports = mongoose.model("SubSection", SubSectionSchema);

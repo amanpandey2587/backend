@@ -1,7 +1,7 @@
 // Replace all tags by category 
 const Section=require("../models/Section");
 const Course=require("../models/Course");
-
+const SubSection=require("../models/SubSection")
 // creation of a section 
 exports.createSection =async (req,res)=>{
     try{
@@ -52,22 +52,29 @@ exports.createSection =async (req,res)=>{
 // updation of course 
 exports.updateSection = async (req,res)=>{
     try{
-
-        // data fetch 
-        const {sectionName,sectionId}=req.body;
-        // data validation 
+        const {sectionName,sectionId,courseId}=req.body;
         if(!sectionName || !sectionId){
             return res.status(400).json({
                 success:true,
                 message:"Missing properties in the field "
             })
         }
-        // data changing in the course wala db
-        const updatedSection=await Section.findByIdAndUpdate({_id:sectionId},{sectionName},{new:true}); 
-        // return response 
+        const section=await Section.findByIdAndUpdate(
+            sectionId,
+            {sectionName},
+            {new:true},
+        );
+        const course = await Course.findById(courseId).populate({
+            path: 'courseContent',
+            populate: {
+                path: 'subSection',
+            },
+        }).exec();
+        
         return res.status(200).json({
             success:true,
             message:"Section updated successfully",
+            data:course,
         });
     }
     catch(error){
@@ -79,37 +86,48 @@ exports.updateSection = async (req,res)=>{
 }
 
 // deletion of course 
-exports.deleteSection = async(req,res)=>{
-    try{
-        // data fetch assuming that we are deleting an id getting in params 
-        const {sectionId,courseId}=req.body;
-        // data validation 
-        if(!sectionId){
-            return res.status(400).json({
-                success:false ,
-                message:"Enter section id field for deletion ",
-            })
-        }
-        // data deletion both from section and from db of course schema 
-        const deletedSection = await Section.findByIdAndDelete(sectionId);
+exports.deleteSection = async (req, res) => {
+	try {
 
-        // Not in babbars' code : 
-        const updatedCourse= await Course.findByIdAndDelete(
-            courseId,
-            // removing the section Id from the course content array 
-            {$pull:{courseContent:sectionId}},
-            {new:true},
-        );
-        // return res
-        return res.status(200).json({
-            success:true,
-            message:"Data deleted from the db successfully ",
-        })
-    }
-    catch(error){
-        return res.json({
-            success:false,
-            message:"Error in section deletion ",
-        })
-    }
-};
+		const { sectionId, courseId }  = req.body;
+		await Course.findByIdAndUpdate(courseId, {
+			$pull: {
+				courseContent: sectionId,
+			}
+		})
+		const section = await Section.findById(sectionId);
+		console.log(sectionId, courseId);
+		if(!section) {
+			return res.status(404).json({
+				success:false,
+				message:"Section not Found",
+			})
+		}
+
+		//delete sub section
+		await SubSection.deleteMany({_id: {$in: section.subSection}});
+
+		await Section.findByIdAndDelete(sectionId);
+
+		//find the updated course and return 
+		const course = await Course.findById(courseId).populate({
+			path:"courseContent",
+			populate: {
+				path: "subSection"
+			}
+		})
+		.exec();
+
+		res.status(200).json({
+			success:true,
+			message:"Section deleted",
+			data:course
+		});
+	} catch (error) {
+		console.error("Error deleting section:", error);
+		res.status(500).json({
+			success: false,
+			message: "Internal server error",
+		});
+	}
+};   
